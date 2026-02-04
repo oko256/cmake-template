@@ -1,0 +1,32 @@
+---
+# Reasoning for the disabled checks:
+# - readability-else-after-return: A stylistic choice, but to me it makes it easier to reason what
+#     the thought process was if elses are used even when not necessarily needed.
+# - readability-identifier-length: In very limited scopes, I think it's fine to have short variable
+#     names.
+# - modernize-use-trailing-return-type: Completely stylistic choice. I don't think trailing return
+#     types are any easier to read.
+# - misc-include-cleaner: Sometimes it is impossible to make this check happy about the includes...
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  clang-diagnostic-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  hicpp-*,
+  cert-*,
+  modernize-*,-modernize-use-trailing-return-type,
+  readability-*,-readability-else-after-return,-readability-identifier-length,
+  performance-*,
+  misc-*,-misc-include-cleaner
+
+# Reasoning for the options:
+# - misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic:
+#     Composition structs can be made of solely public member variables.
+CheckOptions:
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: true
+
+# Use style from .clang-format when suggesting fixes.
+FormatStyle: file

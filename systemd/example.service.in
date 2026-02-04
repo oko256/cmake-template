@@ -1,0 +1,10 @@
+[Unit]
+Description=Example Service
+
+[Service]
+Type=simple
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/x_NAME_x
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
