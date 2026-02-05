@@ -62,7 +62,9 @@ macro(x_NAME_x_setup_options)
     option(x_NAME_x_UNITY_BUILD "Enable unity build" OFF)
 
     option(x_NAME_x_COVERAGE "Enable code coverage reporting" OFF)
-    set(x_NAME_x_COVERAGE_EXCLUDES "test/*;/usr/*;*/autogen-version/*" CACHE STRING
+    set(x_NAME_x_COVERAGE_EXCLUDES
+        "*/test/*;/usr/*;*/autogen-version/*;*/src/main.cpp"
+        CACHE STRING
         "Glob patterns to exclude from code coverage, separated by ';'")
 
     if(NOT PROJECT_IS_TOP_LEVEL)
@@ -110,11 +112,10 @@ macro(x_NAME_x_apply_options_before_dependencies)
                 "[x_NAME_x] Code coverage can only be enabled for Debug builds since it is the "
                 "most accurate without optimizations and with debug symbols.")
         endif()
-        include("${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake")
         message(STATUS
             "[x_NAME_x] Code coverage enabled (disables optimization and forces debug symbols)")
-        append_coverage_compiler_flags()
-        add_compile_options(-O0 -g)
+        add_compile_options(--coverage -O0 -g)
+        add_link_options(--coverage)
     endif()
 endmacro()
 
@@ -173,14 +174,13 @@ endfunction()
 #          $ make coverage
 function(x_NAME_x_set_code_coverage_target test_target coverage_target)
     if(x_NAME_x_COVERAGE)
-        include("${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake")
+        include("${PROJECT_SOURCE_DIR}/cmake/coverage.cmake")
         message(STATUS
             "[x_NAME_x] Target '${test_target}' provides code coverage target '${coverage_target}'")
-        setup_target_for_coverage_lcov(
-            NAME ${coverage_target}
-            EXECUTABLE ${test_target}
+        setup_coverage_target_fastcov(
+            COVERAGE_TARGET ${coverage_target}
+            EXEC_TARGET ${test_target}
             EXCLUDE "${x_NAME_x_COVERAGE_EXCLUDES}"
-            LCOV_ARGS --ignore-errors unused # Do not fail if some exclude patterns are unused
         )
     endif()
 endfunction()
