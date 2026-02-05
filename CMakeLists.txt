@@ -47,7 +47,7 @@ if(Doxygen_FOUND)
     set(DOXYGEN_EXCLUDE_PATTERNS */build/* */build-*/ */cmake/*)
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${PROJECT_SOURCE_DIR}/README.md")
     doxygen_add_docs(doc
-        ${CURRENT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}
         COMMENT "Generate documentation with Doxygen"
     )
 endif()
