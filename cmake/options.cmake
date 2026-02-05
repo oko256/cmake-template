@@ -11,6 +11,10 @@ macro(x_NAME_x_setup_options)
 
     if(PROJECT_IS_TOP_LEVEL)
         option(x_NAME_x_DEVELOPER_MODE "Enable developer mode" OFF)
+
+        # compile_commands.json is required for external tools
+        set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL
+            "Generate compile_commands.json for use by external tools" FORCE)
     endif()
 
     option(x_NAME_x_HARDENING "Enable hardening compiler options" ON)
