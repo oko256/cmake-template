@@ -85,15 +85,18 @@ function(x_NAME_x_set_project_version_from_git_tag)
 
     # Get commit years for copyright purposes.
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} log --format='%ad' --date=format:'%Y'
+        COMMAND ${GIT_EXECUTABLE} log --format=%ad --date=format:%Y
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         OUTPUT_VARIABLE git_commit_years
         OUTPUT_STRIP_TRAILING_WHITESPACE
         RESULT_VARIABLE _git_years_result
     )
     if(_git_years_result EQUAL 0)
-        string(REGEX MATCH "^[0-9]{4}" newest_year "${git_commit_years}")
-        string(REGEX REPLACE ".*\n([0-9]{4})$" "\\1" oldest_year "${git_commit_years}")
+        # Convert newline-separated years into a CMake list.
+        string(REPLACE "\n" ";" git_commit_years_list "${git_commit_years}")
+        # Newest is the first line and oldest is the last line.
+        list(GET git_commit_years_list 0 newest_year)
+        list(GET git_commit_years_list -1 oldest_year)
         set(PROJECT_NEWEST_COMMIT_YEAR "${newest_year}" PARENT_SCOPE)
         set(PROJECT_OLDEST_COMMIT_YEAR "${oldest_year}" PARENT_SCOPE)
     else()
