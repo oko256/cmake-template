@@ -93,7 +93,7 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
     )
     install(
         EXPORT ${LIBRARY_NAME}Targets
-        NAMESPACE ${LIBRARY_NAME}::
+        NAMESPACE x_NAME_x::
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${LIBRARY_NAME}"
         COMPONENT x_NAME_x_Development
     )
