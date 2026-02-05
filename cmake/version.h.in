@@ -7,9 +7,8 @@ extern "C" {
 unsigned int @VERSION_PREFIX@_version_major();
 unsigned int @VERSION_PREFIX@_version_minor();
 unsigned int @VERSION_PREFIX@_version_patch();
-const char*  @VERSION_PREFIX@_version_string();
 const char*  @VERSION_PREFIX@_version_branch();
-const char*  @VERSION_PREFIX@_copyright();
+const char*  @VERSION_PREFIX@_version_string();
 const char*  @VERSION_PREFIX@_preamble();
 const char*  @VERSION_PREFIX@_description();
 
