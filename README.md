@@ -214,7 +214,8 @@ to Unity for example and it should work fine.
 
 ## Licensing
 
-This template is licensed under the BSD 0-clause license.
+This template is licensed under the BSD 0-clause license, except for the `cmake/CodeCoverage.cmake`
+module which is licensed under the `BSD-3-Clause` license.
 
 `SPDX-License-Identifier: 0BSD`
 
