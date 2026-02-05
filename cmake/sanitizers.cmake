@@ -32,7 +32,7 @@ function(x_NAME_x_enable_sanitizers
     if(combined_sanitizers AND NOT "${combined_sanitizers}" STREQUAL "")
         message(STATUS
             "[x_NAME_x] Enabling sanitizers [${combined_sanitizers}] for target: ${target}")
-        target_compile_options(${target} INTERFACE -fsanitize=${combined_sanitizers})
-        target_link_options(${target} INTERFACE -fsanitize=${combined_sanitizers})
+        target_compile_options(${target} PRIVATE -fsanitize=${combined_sanitizers})
+        target_link_options(${target} PRIVATE -fsanitize=${combined_sanitizers})
     endif()
 endfunction()

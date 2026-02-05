@@ -65,7 +65,7 @@ function(x_NAME_x_enable_warnings
     message(VERBOSE "[x_NAME_x] - C compiler: ${warn_compile_options_c}")
     message(VERBOSE "[x_NAME_x] - C++ compiler: ${warn_compile_options_cpp}")
 
-    target_compile_options(${target} INTERFACE
+    target_compile_options(${target} PRIVATE
         $<$<COMPILE_LANGUAGE:CXX>:${warn_compile_options_cpp}>
         $<$<COMPILE_LANGUAGE:C>:${warn_compile_options_c}>
     )

@@ -76,12 +76,12 @@ function(x_NAME_x_enable_hardening
             $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:${hard_link_options_shared}>
         )
     else()
-        target_compile_options(${target} INTERFACE
+        target_compile_options(${target} PRIVATE
             ${hard_compile_options}
             $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,EXECUTABLE>:${hard_compile_options_exe}>
             $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:${hard_compile_options_shared}>
         )
-        target_link_options(${target} INTERFACE
+        target_link_options(${target} PRIVATE
             ${hard_link_options}
             $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,EXECUTABLE>:${hard_link_options_exe}>
             $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:${hard_link_options_shared}>
