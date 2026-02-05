@@ -125,8 +125,6 @@ function(x_NAME_x_apply_options target)
     include("${PROJECT_SOURCE_DIR}/cmake/warnings.cmake")
     x_NAME_x_enable_warnings(${target} ${x_NAME_x_WARNINGS_AS_ERRORS})
 
-    set_target_properties(${target} PROPERTIES UNITY_BUILD ${x_NAME_x_UNITY_BUILD})
-
     # Enable compiler hardening for local targets if requested.
     if(x_NAME_x_HARDENING AND NOT x_NAME_x_HARDENING_GLOBALLY)
         include("${PROJECT_SOURCE_DIR}/cmake/hardening.cmake")
