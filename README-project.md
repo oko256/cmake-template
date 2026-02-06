@@ -79,8 +79,11 @@ Below is a list of CMake options available for this project along with their des
 
 ## Code coverage report
 
-First, you must install `lcov` package to be able to generate code coverage reports
-(e.g. `sudo apt install lcov`).
+You need `lcov` package and `fastcov` tool to generate code coverage reports, for example:
+```bash
+sudo apt install lcov pipx
+pipx install fastcov
+```
 
 1. Set the following options in CMake to be able to generate code coverage reports:
     - `CMAKE_BUILD_TYPE=Debug`
