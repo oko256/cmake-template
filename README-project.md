@@ -1,4 +1,4 @@
-# x_NAME_x
+# x_PROJECT_NAME_x
 
 ## Setting up for development
 

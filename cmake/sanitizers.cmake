@@ -20,7 +20,7 @@ function(x_NAME_x_enable_sanitizers
         # ThreadSanitizer cannot be combined with Leak or Address!
         if("address" IN_LIST sanitizers_list OR "leak" IN_LIST sanitizers_list)
             message(FATAL_ERROR
-                "[x_NAME_x] ThreadSanitizer does not work together with "
+                "[x_PROJECT_NAME_x] ThreadSanitizer does not work together with "
                 "AddressSanitizer or LeakSanitizer.")
         else()
             list(APPEND sanitizers_list "thread")
@@ -31,7 +31,7 @@ function(x_NAME_x_enable_sanitizers
     list(JOIN sanitizers_list "," combined_sanitizers)
     if(combined_sanitizers AND NOT "${combined_sanitizers}" STREQUAL "")
         message(STATUS
-            "[x_NAME_x] Enabling sanitizers [${combined_sanitizers}] for target: ${target}")
+            "[x_PROJECT_NAME_x] Enabling sanitizers [${combined_sanitizers}] for target: ${target}")
         target_compile_options(${target} PRIVATE -fsanitize=${combined_sanitizers})
         target_link_options(${target} PRIVATE -fsanitize=${combined_sanitizers})
     endif()

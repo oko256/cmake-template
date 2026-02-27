@@ -3,7 +3,7 @@ include(CMakeDependentOption)
 # This macro sets up all configurable options for the project.
 macro(x_NAME_x_setup_options)
     if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-        message(STATUS "[x_NAME_x] No build type selected, defaulting to Debug")
+        message(STATUS "[x_PROJECT_NAME_x] No build type selected, defaulting to Debug")
         set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build" FORCE)
         set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
             "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
@@ -97,11 +97,11 @@ macro(x_NAME_x_apply_options_before_dependencies)
         include(CheckIPOSupported)
         check_ipo_supported(RESULT ipo_supported OUTPUT ipo_check_output)
         if(ipo_supported)
-            message(STATUS "[x_NAME_x] IPO/LTO enabled")
+            message(STATUS "[x_PROJECT_NAME_x] IPO/LTO enabled")
             set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
         else()
             message(FATAL_ERROR
-                "[x_NAME_x] IPO/LTO requested, but not supported: ${ipo_check_output}")
+                "[x_PROJECT_NAME_x] IPO/LTO requested, but not supported: ${ipo_check_output}")
         endif()
     endif()
 
@@ -109,11 +109,11 @@ macro(x_NAME_x_apply_options_before_dependencies)
     if(x_NAME_x_COVERAGE)
         if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
             message(FATAL_ERROR
-                "[x_NAME_x] Code coverage can only be enabled for Debug builds since it is the "
-                "most accurate without optimizations and with debug symbols.")
+                "[x_PROJECT_NAME_x] Code coverage can only be enabled for Debug builds since it "
+                "is the most accurate without optimizations and with debug symbols.")
         endif()
         message(STATUS
-            "[x_NAME_x] Code coverage enabled (disables optimization and forces debug symbols)")
+            "[x_PROJECT_NAME_x] Code coverage enabled (disables optimization and forces debug symbols)")
         add_compile_options(--coverage -O0 -g)
         add_link_options(--coverage)
     endif()
@@ -122,7 +122,7 @@ endmacro()
 # This function applies various options to the given target. This should be called for all
 # targets of this project that is desired to follow the custom project options.
 function(x_NAME_x_apply_options target)
-    message(STATUS "[x_NAME_x] Applying options for target: ${target}")
+    message(STATUS "[x_PROJECT_NAME_x] Applying options for target: ${target}")
     include("${PROJECT_SOURCE_DIR}/cmake/warnings.cmake")
     x_NAME_x_enable_warnings(${target} ${x_NAME_x_WARNINGS_AS_ERRORS})
 
@@ -142,29 +142,29 @@ function(x_NAME_x_apply_options target)
     )
 
     if(x_NAME_x_SA_CLANG_TIDY)
-        message(STATUS "[x_NAME_x] - Enabling clang-tidy static analysis")
+        message(STATUS "[x_PROJECT_NAME_x] - Enabling clang-tidy static analysis")
         # This is actually configured per-target. See target-properties.cmake.
     endif()
     if(x_NAME_x_SA_CPPCHECK)
-        message(STATUS "[x_NAME_x] - Enabling cppcheck static analysis")
+        message(STATUS "[x_PROJECT_NAME_x] - Enabling cppcheck static analysis")
         # This is actually configured per-target. See target-properties.cmake.
     endif()
 
     if(x_NAME_x_CCACHE)
         find_program(CCACHE_PROGRAM ccache)
         if(CCACHE_PROGRAM)
-            message(STATUS "[x_NAME_x] - Ccache enabled")
+            message(STATUS "[x_PROJECT_NAME_x] - Ccache enabled")
             set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
             set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
         else()
             message(FATAL_ERROR
-                "[x_NAME_x] Ccache option is enabled but Ccache could not be found!")
+                "[x_PROJECT_NAME_x] Ccache option is enabled but Ccache could not be found!")
         endif()
     endif()
 
     set_target_properties(${target} PROPERTIES UNITY_BUILD ${x_NAME_x_UNITY_BUILD})
     if(x_NAME_x_UNITY_BUILD)
-        message(STATUS "[x_NAME_x] - Unity build enabled")
+        message(STATUS "[x_PROJECT_NAME_x] - Unity build enabled")
     endif()
 endfunction()
 
@@ -176,7 +176,7 @@ function(x_NAME_x_set_code_coverage_target test_target coverage_target)
     if(x_NAME_x_COVERAGE)
         include("${PROJECT_SOURCE_DIR}/cmake/coverage.cmake")
         message(STATUS
-            "[x_NAME_x] Target '${test_target}' provides code coverage target '${coverage_target}'")
+            "[x_PROJECT_NAME_x] Target '${test_target}' provides code coverage target '${coverage_target}'")
         setup_coverage_target_fastcov(
             COVERAGE_TARGET ${coverage_target}
             EXEC_TARGET ${test_target}

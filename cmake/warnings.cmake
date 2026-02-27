@@ -21,7 +21,7 @@ function(x_NAME_x_enable_warnings
         -Wdouble-promotion      # Implicit conversion from float to double.
     )
     if(warnings_as_errors)
-        message(STATUS "[x_NAME_x] Treating warnings as errors for target: ${target}")
+        message(STATUS "[x_PROJECT_NAME_x] Treating warnings as errors for target: ${target}")
         list(APPEND warn_compile_options_cpp -Werror)
     endif()
     set(warn_compile_options_c ${warn_compile_options_cpp})
@@ -61,9 +61,9 @@ function(x_NAME_x_enable_warnings
         )
     endif()
 
-    message(STATUS "[x_NAME_x] Enabled extra compiler warnings for target: ${target}")
-    message(VERBOSE "[x_NAME_x] - C compiler: ${warn_compile_options_c}")
-    message(VERBOSE "[x_NAME_x] - C++ compiler: ${warn_compile_options_cpp}")
+    message(STATUS "[x_PROJECT_NAME_x] Enabled extra compiler warnings for target: ${target}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - C compiler: ${warn_compile_options_c}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - C++ compiler: ${warn_compile_options_cpp}")
 
     target_compile_options(${target} PRIVATE
         $<$<COMPILE_LANGUAGE:CXX>:${warn_compile_options_cpp}>

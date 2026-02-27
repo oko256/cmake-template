@@ -7,9 +7,9 @@ function(x_NAME_x_enable_hardening
         enable_globally)
 
     if(enable_globally)
-        message(STATUS "[x_NAME_x] Enabled compiler hardening options globally")
+        message(STATUS "[x_PROJECT_NAME_x] Enabled compiler hardening options globally")
     else()
-        message(STATUS "[x_NAME_x] Enabled compiler hardening options for target: ${target}")
+        message(STATUS "[x_PROJECT_NAME_x] Enabled compiler hardening options for target: ${target}")
     endif()
 
     # Common hardening compile options for both GCC and Clang:
@@ -35,7 +35,7 @@ function(x_NAME_x_enable_hardening
         # non-Debug builds.
         list(APPEND hard_compile_options -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3)
     else()
-        message(STATUS "[x_NAME_x] - Skipping _FORTIFY_SOURCE=3 hardening for Debug build.")
+        message(STATUS "[x_PROJECT_NAME_x] - Skipping _FORTIFY_SOURCE=3 hardening for Debug build.")
     endif()
 
     if(CMAKE_SYSTEM_PROCESSOR MATCHES ".*x86_64.*")
@@ -57,12 +57,12 @@ function(x_NAME_x_enable_hardening
     list(APPEND hard_compile_options_shared -fPIC)  # Position Independent Code.
     list(APPEND hard_link_options_shared -shared)   # Shared library.
 
-    message(VERBOSE "[x_NAME_x] - Compile options: ${hard_compile_options}")
-    message(VERBOSE "[x_NAME_x] - + for executables: ${hard_compile_options_exe}")
-    message(VERBOSE "[x_NAME_x] - + for shared libraries: ${hard_compile_options_shared}")
-    message(VERBOSE "[x_NAME_x] - Link options: ${hard_link_options}")
-    message(VERBOSE "[x_NAME_x] - + for executables: ${hard_link_options_exe}")
-    message(VERBOSE "[x_NAME_x] - + for shared libraries: ${hard_link_options_shared}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - Compile options: ${hard_compile_options}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - + for executables: ${hard_compile_options_exe}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - + for shared libraries: ${hard_compile_options_shared}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - Link options: ${hard_link_options}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - + for executables: ${hard_link_options_exe}")
+    message(VERBOSE "[x_PROJECT_NAME_x] - + for shared libraries: ${hard_link_options_shared}")
 
     if(enable_globally)
         add_compile_options(

@@ -3,7 +3,7 @@ Description=Example Service
 
 [Service]
 Type=simple
-ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/x_NAME_x
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/x_PROJECT_NAME_x
 Restart=on-failure
 
 [Install]

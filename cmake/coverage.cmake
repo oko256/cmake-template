@@ -16,19 +16,19 @@ function(setup_coverage_target_fastcov)
     find_program(FASTCOV_PROGRAM NAMES fastcov fastcov.py)
     if(NOT FASTCOV_PROGRAM)
         message(FATAL_ERROR
-            "[x_NAME_x] Fastcov is required for code coverage but was not found in PATH."
+            "[x_PROJECT_NAME_x] Fastcov is required for code coverage but was not found in PATH."
         )
     endif()
     find_program(GCOV_PROGRAM NAMES gcov)
     if(NOT GCOV_PROGRAM)
         message(FATAL_ERROR
-            "[x_NAME_x] gcov is required for code coverage but was not found in PATH."
+            "[x_PROJECT_NAME_x] gcov is required for code coverage but was not found in PATH."
         )
     endif()
     find_program(GENHTML_PROGRAM NAMES genhtml genhtml.perl genhtml.bat)
     if(NOT GENHTML_PROGRAM)
         message(FATAL_ERROR
-            "[x_NAME_x] genhtml is required for code coverage but was not found in PATH."
+            "[x_PROJECT_NAME_x] genhtml is required for code coverage but was not found in PATH."
         )
     endif()
 

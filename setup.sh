@@ -14,13 +14,15 @@ export LC_ALL
 
 echo "Please read README.md before using this template."
 echo
-echo "Project name will be used as CMake project name, function/macro name prefix,"
+echo "Project name will be used as CMake project name, variable/function/macro name prefix,"
 echo "and also as the name of the main executable (if any)."
+echo "Note, that variable/function/macro prefix will have underscores instead of dashes."
 echo "Allowed characters: a-z, A-Z, 0-9, underscore (_), hyphen (-)."
 read -r -p "Project Name: " project_name
 if [[ "$project_name" =~ ^[a-zA-Z0-9_-]+$ ]]
 then
-    echo "Project name is '$project_name'."
+    prefix="${project_name//-/_}"
+    echo "Project name is '$project_name'. Variable/function/macro prefix is '$prefix'."
 else
     echo "ERROR: Project name contains invalid characters."
     exit 1
@@ -49,7 +51,8 @@ echo
 rm -rf .git/
 
 # Replace the project name placeholders with the actual project name.
-grep -lr 'x_NAME_x' . | xargs sed -i "s/x_NAME_x/${project_name}/g"
+grep -lr 'x_PROJECT_NAME_x' . | xargs sed -i "s/x_PROJECT_NAME_x/${project_name}/g"
+grep -lr 'x_NAME_x' . | xargs sed -i "s/x_NAME_x/${prefix}/g"
 
 # Make project README the main README.md and retain the template usage instructions in a separate file.
 mv README.md README-template.md

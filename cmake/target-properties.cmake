@@ -29,7 +29,7 @@ function(x_NAME_x_enable_clang_tidy target)
     find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-tidy")
         message(FATAL_ERROR
-            "[x_NAME_x] clang-tidy configuration does not exist for this project! "
+            "[x_PROJECT_NAME_x] clang-tidy configuration does not exist for this project! "
             "Please create to: ${CMAKE_SOURCE_DIR}/.clang-tidy"
         )
     endif()

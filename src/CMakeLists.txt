@@ -27,7 +27,7 @@ target_include_directories(x_NAME_x-exe PRIVATE
 )
 
 add_executable(x_NAME_x::exe ALIAS x_NAME_x-exe)
-set_property(TARGET x_NAME_x-exe PROPERTY OUTPUT_NAME x_NAME_x)
+set_property(TARGET x_NAME_x-exe PROPERTY OUTPUT_NAME x_PROJECT_NAME_x)
 target_compile_features(x_NAME_x-exe PUBLIC cxx_std_23)
 target_link_libraries(x_NAME_x-exe PRIVATE x_NAME_x-common)
 x_NAME_x_apply_options(x_NAME_x-exe)

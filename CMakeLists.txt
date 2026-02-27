@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 include(cmake/build-guard.cmake)
 
 project(
-    x_NAME_x
+    x_PROJECT_NAME_x
     DESCRIPTION "TODO Add few words describing the project here"
     HOMEPAGE_URL "TODO Add project homepage URL here"
     LANGUAGES C CXX
