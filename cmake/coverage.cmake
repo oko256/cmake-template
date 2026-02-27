@@ -4,7 +4,7 @@
 # EXCLUDE argument can be used to provide list of glob patterns to exclude from the report.
 # More excludes can also be provided globally with GLOBAL_COVERAGE_EXCLUDES variable.
 # Base directory defaults to PROJECT_SOURCE_DIR, but can be changed with BASE_DIR argument.
-function(setup_coverage_target_fastcov)
+function(x_NAME_x_setup_coverage_target_fastcov)
     cmake_parse_arguments(
         arg
         "" # Options

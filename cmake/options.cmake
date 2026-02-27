@@ -63,7 +63,7 @@ macro(x_NAME_x_setup_options)
 
     option(x_NAME_x_COVERAGE "Enable code coverage reporting" OFF)
     set(x_NAME_x_COVERAGE_EXCLUDES
-        "*/test/*;/usr/*;*/autogen-version/*;*/src/main.cpp"
+        "*/test/*;/usr/*;*/autogen-version/*;*/src/main.cpp;*/_deps/*"
         CACHE STRING
         "Glob patterns to exclude from code coverage, separated by ';'")
 
@@ -177,7 +177,7 @@ function(x_NAME_x_set_code_coverage_target test_target coverage_target)
         include("${PROJECT_SOURCE_DIR}/cmake/coverage.cmake")
         message(STATUS
             "[x_PROJECT_NAME_x] Target '${test_target}' provides code coverage target '${coverage_target}'")
-        setup_coverage_target_fastcov(
+        x_NAME_x_setup_coverage_target_fastcov(
             COVERAGE_TARGET ${coverage_target}
             EXEC_TARGET ${test_target}
             EXCLUDE "${x_NAME_x_COVERAGE_EXCLUDES}"
