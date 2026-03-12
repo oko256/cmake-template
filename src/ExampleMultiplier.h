@@ -13,5 +13,5 @@ public:
     [[nodiscard]] int64_t result() const;
 
 private:
-    int64_t product{};
+    int64_t product_{};
 };
