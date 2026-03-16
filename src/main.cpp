@@ -11,6 +11,8 @@ int main()
     ExampleMultiplier x;
     x.multiply(3, 4);
     spdlog::info("{}", x.result());
+    x.doubleize();
+    spdlog::info("{}", x.result());
     spdlog::info("Library call result: {}", examplelib::normal_concat("hello ", "world"));
     return 0;
 }

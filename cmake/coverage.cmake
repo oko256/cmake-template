@@ -3,7 +3,7 @@
 # path). Additional arguments for executable target can be provided with EXEC_ARGS argument.
 # EXCLUDE argument can be used to provide list of glob patterns to exclude from the report.
 # More excludes can also be provided globally with GLOBAL_COVERAGE_EXCLUDES variable.
-# Base directory defaults to PROJECT_SOURCE_DIR, but can be changed with BASE_DIR argument.
+# Base directory defaults to PROJECT_BINARY_DIR, but can be changed with BASE_DIR argument.
 function(x_NAME_x_setup_coverage_target_fastcov)
     cmake_parse_arguments(
         arg
@@ -35,7 +35,7 @@ function(x_NAME_x_setup_coverage_target_fastcov)
     if(arg_BASE_DIR)
         set(_base_dir "${arg_BASE_DIR}")
     else()
-        set(_base_dir "${PROJECT_SOURCE_DIR}")
+        set(_base_dir "${PROJECT_BINARY_DIR}")
     endif()
 
     set(_excludes "")

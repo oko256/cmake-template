@@ -1,0 +1,45 @@
+{
+  "version": 8,
+  "$schema": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "ci",
+      "displayName": "CI",
+      "description": "Configuration for CI: debug build with tests, coverage, and static analysis enabled",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "x_NAME_x_BUILD_TESTING": "ON",
+        "x_NAME_x_COVERAGE": "ON",
+        "x_NAME_x_DEVELOPER_MODE": "ON",
+        "x_NAME_x_SA_CLANG_TIDY": "ON",
+        "x_NAME_x_SA_CPPCHECK": "ON",
+        "x_NAME_x_SA_CPPCHECK_EXH": "OFF",
+        "x_NAME_x_SA_IWYU": "OFF",
+        "x_NAME_x_WARNINGS_AS_ERRORS": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ci",
+      "configurePreset": "ci"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "ci",
+      "configurePreset": "ci",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

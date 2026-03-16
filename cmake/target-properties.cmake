@@ -26,7 +26,11 @@ endfunction()
 
 # This function enables clang-tidy static analysis for the given target.
 function(x_NAME_x_enable_clang_tidy target)
-    find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+    # Clang-tidy-19 or newer is required for the --exclude-header-filter option.
+    find_program(CLANG_TIDY_EXE
+        NAMES clang-tidy-22 clang-tidy-21 clang-tidy-20 clang-tidy-19
+        REQUIRED
+    )
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-tidy")
         message(FATAL_ERROR
             "[x_PROJECT_NAME_x] clang-tidy configuration does not exist for this project! "
@@ -48,9 +52,19 @@ function(x_NAME_x_enable_clang_tidy target)
     if(x_NAME_x_WARNINGS_AS_ERRORS)
         list(APPEND CLANG_TIDY_OPT "--warnings-as-errors=*")
     endif()
+    # GCC passes module-related flags (e.g. -fdeps-format, -fmodule-mapper, -fmodules-ts)
+    # that clang-tidy does not recognize and cannot suppress. Disable module scanning
+    # for this target when compiling with GCC to prevent these flags from being generated.
+    # TODO: If ever want to make this combination work, then maybe create a wrapper script that
+    # is called instead of clang-tidy that filters out the module-related flags first.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        set_target_properties(${target} PROPERTIES CXX_SCAN_FOR_MODULES OFF)
+    endif()
     set_target_properties(${target} PROPERTIES
         CXX_CLANG_TIDY "${CLANG_TIDY_OPT}"
         C_CLANG_TIDY "${CLANG_TIDY_OPT}"
+        CXX_CLANG_TIDY_EXPORT_FIXES_DIR clang-tidy-fixes
+        C_CLANG_TIDY_EXPORT_FIXES_DIR clang-tidy-fixes
     )
 endfunction()
 

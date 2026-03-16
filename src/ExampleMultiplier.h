@@ -12,6 +12,8 @@ public:
     /// Returns the stored product.
     [[nodiscard]] int64_t result() const;
 
+    void doubleize() { m_product *= 2; }
+
 private:
     int64_t m_product{};
 };

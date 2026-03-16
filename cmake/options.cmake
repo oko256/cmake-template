@@ -105,7 +105,7 @@ macro(x_NAME_x_apply_options_before_dependencies)
         endif()
     endif()
 
-    # Enable code coverage compiler flags if requested.
+    # Validate code coverage option if requested.
     if(x_NAME_x_COVERAGE)
         if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
             message(FATAL_ERROR
@@ -114,8 +114,6 @@ macro(x_NAME_x_apply_options_before_dependencies)
         endif()
         message(STATUS
             "[x_PROJECT_NAME_x] Code coverage enabled (disables optimization and forces debug symbols)")
-        add_compile_options(--coverage -O0 -g)
-        add_link_options(--coverage)
     endif()
 endmacro()
 
@@ -160,6 +158,12 @@ function(x_NAME_x_apply_options target)
             message(FATAL_ERROR
                 "[x_PROJECT_NAME_x] Ccache option is enabled but Ccache could not be found!")
         endif()
+    endif()
+
+    # Enable code coverage instrumentation for this target only, not for dependencies.
+    if(x_NAME_x_COVERAGE)
+        target_compile_options(${target} PRIVATE --coverage -O0 -g)
+        target_link_options(${target} PRIVATE --coverage)
     endif()
 
     set_target_properties(${target} PROPERTIES UNITY_BUILD ${x_NAME_x_UNITY_BUILD})

@@ -1,0 +1,151 @@
+# CI WORKFLOW
+# ===========
+# Parallel jobs on push and pull request for:
+# 1. clang-format check
+# 2. build, test, and analyze (clang-tidy, cppcheck, unit tests, code coverage)
+# 3. typos spell check
+
+name: CI
+on: [push, pull_request]
+
+# Cancel redundant runs: if a new commit is pushed to a PR branch, cancel the previous runs
+# for that branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: clang-format check
+  formatting:
+    name: Formatting Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path:
+          - 'src'
+          - 'include'
+          - 'test'
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run clang-format style check for C/C++/Protobuf programs.
+        uses: jidicula/clang-format-action@v4.16.0
+        with:
+          check-path: ${{ matrix.path }}
+
+  # Job 2: build, test, and analyze
+  build:
+    name: Build, Test, and Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write  # Allow commenting on PR
+      contents: write       # Allow auto-closing of clang-tidy conversations
+    steps:
+      - uses: actions/checkout@v6
+
+      # Install tools
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+      - name: Install analysis and coverage tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy-19 cppcheck lcov python3-pip
+          pip install fastcov --break-system-packages
+
+      # Install dependencies (if any for your project)
+      # - name: Install project dependencies
+      #   run: |
+      #     (put whatever is needed as dependencies for your project here, if any)
+
+      # Register cppcheck problem matcher
+      - name: Register cppcheck problem matcher
+        run: |
+          echo "::add-matcher::${{ github.workspace }}/.github/problem-matchers/cppcheck.json"
+
+      # Configure and build using CI preset from CMakePresets.json
+
+      - name: Configure (CMake preset)
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'ci'
+
+      - name: Build (CMake preset)
+        uses: lukka/run-cmake@v10
+        with:
+          buildPreset: 'ci'
+
+      # Run unit tests and generate code coverage report
+
+      - name: Run tests
+        uses: lukka/run-cmake@v10
+        with:
+          testPreset: 'ci'
+
+      - name: Generate code coverage report
+        run: cmake --build build --target coverage
+
+      - name: Report code coverage
+        uses: zgosalvez/github-actions-report-lcov@v7
+        with:
+          coverage-files: build/coverage.info
+          minimum-coverage: 80
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          artifact-name: coverage-report
+          update-comment: true
+
+      # Merge clang-tidy fixes files from multiple files created by CMake's
+      # CLANG_TIDY_EXPORT_FIXES_DIR functionality using the same logic that LLVM's own
+      # run-clang-tidy.py uses.
+      - name: Merge clang-tidy fixes
+        if: always()
+        run: |
+          python3 - <<'PYEOF'
+          import glob, yaml, sys, os
+
+          build_dir = "build" # Adjust to match your build directory
+          merged_file = os.path.join(build_dir, "clang-tidy-fixes-merged.yaml")
+          mergekey = "Diagnostics"
+          merged = []
+
+          # Find all .yaml files under any "clang-tidy-fixes" directory in the build tree to
+          # pick up fixes from all CMake targets that use clang-tidy.
+          for f in glob.iglob(os.path.join(build_dir, "**", "clang-tidy-fixes", "*.yaml"), recursive=True):
+              try:
+                  with open(f) as fh:
+                      content = yaml.safe_load(fh)
+                  if content and mergekey in content:
+                      merged.extend(content[mergekey])
+              except Exception as e:
+                  print(f"Warning: Could not read {f}: {e}", file=sys.stderr)
+
+          if merged:
+              output = {"MainSourceFile": "", mergekey: merged}
+              with open(merged_file, "w") as out:
+                  yaml.safe_dump(output, out)
+              print(f"Merged {len(merged)} diagnostics into {merged_file}")
+          else:
+              # Write an empty file so the action doesn't error on missing file
+              open(merged_file, "w").close()
+              print("No clang-tidy diagnostics found.")
+          PYEOF
+
+      # Post clang-tidy warnings as PR review comments. Runs with "if: always()" so it posts even
+      # if tests or coverage failed. Only has effect on pull requests; on push events it exits
+      # successfully without doing anything.
+      - name: Post clang-tidy PR comments
+        if: always()
+        uses: platisd/clang-tidy-pr-comments@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          clang_tidy_fixes: build/clang-tidy-fixes-merged.yaml
+          request_changes: true
+          suggestions_per_comment: 10
+
+  # Job 3: typos spell check
+  typos:
+    name: Spell Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check spelling
+        uses: crate-ci/typos@v1.44.0
