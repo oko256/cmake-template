@@ -61,9 +61,12 @@ jobs:
         uses: lukka/get-cmake@v4.2.3
 
       - name: Install analysis and coverage tools
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: clang-tidy-19 cppcheck lcov python3 pipx
+          version: 1.0
+      - name: Install fastcov
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-tidy-19 cppcheck lcov python3 pipx
           pipx install fastcov
 
       # Install project dependencies (if any)

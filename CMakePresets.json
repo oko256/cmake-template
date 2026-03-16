@@ -25,12 +25,26 @@
         "x_NAME_x_SA_IWYU": "OFF",
         "x_NAME_x_WARNINGS_AS_ERRORS": "ON"
       }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Release build configuration",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ],
   "buildPresets": [
     {
       "name": "ci",
       "configurePreset": "ci"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
     }
   ],
   "testPresets": [

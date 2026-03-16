@@ -29,6 +29,8 @@ The main features of this template include:
    interprocedural optimization (IPO/LTO).
  - Automatic generation of versioning functions and library versioning based on git tags.
  - Integration of Doxygen to build documentation.
+ - GitHub CI workflows for builds with static analysis enabled, unit testing, and code coverage
+   reporting on push and pull request events.
 
 ## Platforms and compilers
 
@@ -128,11 +130,13 @@ described above, you should slim down the template:
 
 You should add all dependencies to `dependencies.cmake` file in the project root. This makes it
 easy to figure out which external dependencies your project has. The template already includes an
-example of how to add `spdlog` dependency using `find_package()`. You can also add subprojects
-or use `FetchContent` to add dependencies if needed.
+example of how to add `spdlog` dependency using `find_package()` with `FetchContent` fallback if
+the system-installed library does not exist or is too old.
 
-One exception is dependencies that are only needed for testing. These should be added to
+Dependencies that are only needed for running unit tests should be added to
 `test/CMakeLists.txt` file instead. The template has example of this (Catch2 testing framework).
+
+Remember to add all your dependencies also to the GitHub CI workflow in `.github/workflows/ci.yml`.
 
 ## Project structure
 
@@ -189,7 +193,8 @@ You obviously can customize this template for your own use cases. Some files tha
 want to touch are at least:
 
  - `.clang-format` file for code formatting rules.
- - `.clang-tidy` file for clang-tidy static analysis rules.
+ - `.clang-tidy` file for clang-tidy static analysis rules. Note, that unit tests have some
+   extra rules disabled for in-editor live analysis with `test/.clang-tidy` file.
  - `cmake/target-properties.cmake` file for *clang-tidy*, *cppcheck*, and *include-what-you-use*
    arguments.
  - `.gitignore` file to ignore files specific to your project.
@@ -204,12 +209,11 @@ to Unity for example and it should work fine.
 
 ## Additional considerations regarding own development setup and CI pipelines
 
- - Consider having clang-format running in your editor to immediately fix formatting issues.
-   Also add a git pre-commit hook and/or CI step to check code formatting.
- - Consider having clang-tidy and/or cppcheck running in your editor to catch static analysis issues
-   as you write code. Also add CI step to run unit tests with static and/or dynamic analysis enabled.
- - Consider having spellchecking in your editor to catch typos as you write code, and also as
-   a CI step.
+ - Consider having *clang-format* plugin running in your editor to immediately fix formatting issues.
+   Also consider adding a git pre-commit hook to catch formatting issues.
+ - Consider having *clang-tidy* and/or *cppcheck* plugin(s) running in your editor to catch static
+   analysis issues as you write code.
+ - Consider having spell checking plugin in your editor to catch typos as you write code.
    For example [typos](https://github.com/crate-ci/typos/tree/master) is a good tool for this.
 
 ## Licensing

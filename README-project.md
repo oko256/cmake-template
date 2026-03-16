@@ -2,58 +2,95 @@
 
 ## Setting up for development
 
-For development, it is usually more convenient to use `ccmake` or `cmake-gui` to configure CMake
-options interactively. To do this, create a build directory and run one of the following commands:
-```bash
-mkdir build
-cd build
-ccmake ..
-# or
-cmake-gui ..
-```
-For development builds, it is recommended to enable developer mode and build testing. You can do this
-by setting the following options in `ccmake` or `cmake-gui`:
-- `x_NAME_x_DEVELOPER_MODE` to `ON`
-- `x_NAME_x_BUILD_TESTING` to `ON`
+Install the following tools:
 
-Same options can be set when running CMake from command line as shown here:
+```bash
+sudo apt install build-essential cmake cppcheck clang-tidy-19 lcov pipx ninja-build
+pipx install fastcov
+```
+
+> [!IMPORTANT]
+> **Clang-tidy version 19 or newer is required!** The example above installs clang-tidy-19,
+> but if your package repository has newer version, for example as `clang-tidy` (without version
+> suffix), you can install that one instead.
+
+Check `dependencies.cmake` for any extra dependencies that you should install before proceeding.
+
+For development, you want to turn on the following CMake options:
+
+- `x_NAME_x_DEVELOPER_MODE=ON`
+- `x_NAME_x_BUILD_TESTING=ON`
+- `x_NAME_x_COVERAGE=ON` (if you also want code coverage reporting, see details below)
+
+It is recommended (but not required) to use *Ninja* (`apt install ninja-build`) generator with
+CMake for faster builds. Also, interface like `ccmake` or `cmake-gui` is convenient for configuring
+CMake options interactively.
+
 ```bash
 mkdir build
 cd build
-cmake -Dx_NAME_x_DEVELOPER_MODE=ON -Dx_NAME_x_BUILD_TESTING=ON ..
+# Then pick one of the following according to your preference:
+# 1. Text-based interface:
+ccmake -G Ninja ..
+# 2. Graphical interface:
+cmake-gui ..
+# 3. Command line options:
+cmake -Dx_NAME_x_DEVELOPER_MODE=ON -Dx_NAME_x_BUILD_TESTING=ON -Dx_NAME_x_COVERAGE=ON -G Ninja ..
+# And depending if you used Ninja or not, build with:
+ninja -jN
+# or
 make -jN
 ```
-`*_DEVELOPER_MODE` is a shorthand for enabling **cppcheck** and **clang-tidy** static analysis
-tools, and also **treating warnings as errors**. `*_BUILD_TESTING` enables building unit tests
-for the project. The project defaults to debug build type if none is specified.
 
-Optionally, code coverage reporting can be enabled with `*_ENABLE_COVERAGE`. See the
-"Code Coverage Report" section below for more details.
+You can run unit tests (or run unit tests and create code coverage report if you enabled it in
+CMake options) like so:
+
+```bash
+# Just run the unit tests:
+ctest
+
+# Or run unit tests and generate code coverage report:
+ninja coverage
+# or
+make coverage
+```
 
 ## Building a release
 
-To build the release version of the project, create a build directory and run CMake with the
-following commands:
+Install the following tools:
+
 ```bash
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make -jN
+sudo apt install build-essential cmake ninja-build
 ```
-Replace `N` with the number of parallel jobs to use (e.g., number of CPU cores).
+
+Check `dependencies.cmake` for any extra dependencies that you should install before proceeding.
+
+Easiest way to do this is to use CMake presets. You can check `CMakePresets.json` file to see
+the exact options used for releases in this project.
+
+Just run the following in the project root directory (make sure `build` directory does not exist
+already):
+
+```bash
+cmake --preset release && cmake --build --preset release
+```
+
+You can also configure and build the release manually in the same way as above, just make sure
+to set CMake options according to release preset in `CMakePresets.json`.
 
 ## Building documentation
 
-To build Doxygen documentation for the project, build the `doc` target and open the generated
-HTML documentation in your web browser (inside the build directory):
+After configuring your build, run the following commands in your build directory:
+
 ```bash
+ninja doc
+# or
 make doc
+# And then the documentation is generated to "html" directory:
 xdg-open html/index.html
 ```
 
 ## CMake options
-
-Below is a list of CMake options available for this project along with their descriptions:
 
 | Option                         | Description |
 |--------------------------------|-------------|
@@ -77,27 +114,9 @@ Below is a list of CMake options available for this project along with their des
 | `x_NAME_x_UNITY_BUILD`         | Enable unity build to speed up compilation
 | `x_NAME_x_WARNINGS_AS_ERRORS`  | Treat compiler and static analysis warnings as errors
 
-## Code coverage report
+## Troubleshooting
 
-You need `lcov` package and `fastcov` tool to generate code coverage reports, for example:
-```bash
-sudo apt install lcov pipx
-pipx install fastcov
-```
-
-1. Set the following options in CMake to be able to generate code coverage reports:
-    - `CMAKE_BUILD_TYPE=Debug`
-    - `x_NAME_x_BUILD_TESTING=ON`
-    - `x_NAME_x_ENABLE_COVERAGE=ON`
-2. Build the coverage reporting target by running `make -jN coverage` (or equivalent) in your
-   build directory (`N` is the number of parallel jobs to use, e.g. number of CPU cores).
-3. Open the generated HTML report by opening `coverage/index.html` from the build directory in
-   your web browser (e.g. `xdg-open coverage/index.html` in build directory).
-
-You can also build the project normally using `make -jN` (or equivalent) and then build the
-coverage report when needed by running `make coverage` (or equivalent).
-
-**Troubleshooting:
+**Coverage report generation fails with
 `lcov: ERROR: (version) Incompatible GCC/GCOV version found while processing ...`**
 
 This error indicates that the version of `gcov` used to generate coverage data is different from
