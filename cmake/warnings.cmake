@@ -21,7 +21,8 @@ function(x_NAME_x_enable_warnings
         -Wdouble-promotion      # Implicit conversion from float to double.
     )
     if(warnings_as_errors)
-        message(STATUS "[x_PROJECT_NAME_x] Treating warnings as errors for target: ${target}")
+        message(STATUS
+            "[x_PROJECT_NAME_x] Treating compiler warnings as errors for target: ${target}")
         list(APPEND warn_compile_options_cpp -Werror)
     endif()
     set(warn_compile_options_c ${warn_compile_options_cpp})
@@ -48,7 +49,6 @@ function(x_NAME_x_enable_warnings
             -Wduplicated-cond       # Identical branches in if-else-if chain.
             -Wduplicated-branches   # Identical switch branches.
             -Wlogical-op            # Suspicious use of logical operators in expressions.
-            -Wuseless-cast          # Cast that does not change value.
         )
         # For C++:
         list(APPEND warn_compile_options_cpp

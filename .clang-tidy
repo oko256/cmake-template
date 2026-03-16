@@ -1,5 +1,7 @@
 ---
 # Reasoning for the disabled checks:
+# - cppcoreguidelines-avoid-do-while
+#     There's specific cases where do...while loops are very useful.
 # - modernize-use-trailing-return-type
 #     Completely stylistic choice. I don't think trailing return types are any easier to read.
 # - readability-else-after-return
@@ -18,7 +20,7 @@ Checks: >
   clang-analyzer-*,
   clang-diagnostic-*,
   concurrency-*,
-  cppcoreguidelines-*,
+  cppcoreguidelines-*,-cppcoreguidelines-avoid-do-while,
   hicpp-*,
   cert-*,
   modernize-*,-modernize-use-trailing-return-type,

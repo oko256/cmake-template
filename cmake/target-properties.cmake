@@ -48,17 +48,13 @@ function(x_NAME_x_enable_clang_tidy target)
         "--extra-arg=-Wno-unused-command-line-argument"
         # Enable colored output
         "--use-color"
+        # Do not output extra statistics
+        "--quiet"
     )
     if(x_NAME_x_WARNINGS_AS_ERRORS)
+        message(STATUS
+            "[x_PROJECT_NAME_x] Treating clang-tidy warnings as errors for target: ${target}")
         list(APPEND CLANG_TIDY_OPT "--warnings-as-errors=*")
-    endif()
-    # GCC passes module-related flags (e.g. -fdeps-format, -fmodule-mapper, -fmodules-ts)
-    # that clang-tidy does not recognize and cannot suppress. Disable module scanning
-    # for this target when compiling with GCC to prevent these flags from being generated.
-    # TODO: If ever want to make this combination work, then maybe create a wrapper script that
-    # is called instead of clang-tidy that filters out the module-related flags first.
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set_target_properties(${target} PROPERTIES CXX_SCAN_FOR_MODULES OFF)
     endif()
     set_target_properties(${target} PROPERTIES
         CXX_CLANG_TIDY "${CLANG_TIDY_OPT}"
@@ -72,6 +68,13 @@ endfunction()
 function(x_NAME_x_enable_cppcheck target)
     find_program(CPPCHECK_EXE NAMES cppcheck REQUIRED)
     set(CPPCHECK_OPT "${CPPCHECK_EXE}")
+    set(_severity_prefix "warning")
+    if(x_NAME_x_WARNINGS_AS_ERRORS)
+        message(STATUS
+            "[x_PROJECT_NAME_x] Treating cppcheck warnings as errors for target: ${target}")
+        list(APPEND CPPCHECK_OPT "--error-exitcode=2")
+        set(_severity_prefix "error")
+    endif()
     list(APPEND CPPCHECK_OPT
         # Exclude FetchContent dependencies from analysis
         "--suppress=*:*_deps/*"
@@ -81,10 +84,11 @@ function(x_NAME_x_enable_cppcheck target)
         "--inconclusive"
         # Allow inline suppression comments in the code
         "--inline-suppr"
+        # Do not print progress reports
+        "--quiet"
+        # Specific output template to distinguish cppcheck output
+        "--template={file}:{line}:{column}: ${_severity_prefix}: CPPCHECK ({severity}): {message} [{id}]"
     )
-    if(x_NAME_x_WARNINGS_AS_ERRORS)
-        list(APPEND CPPCHECK_OPT "--error-exitcode=2")
-    endif()
     if(x_NAME_x_SA_CPPCHECK_EXH)
         list(APPEND CPPCHECK_OPT "--check-level=exhaustive")
     else()
@@ -111,6 +115,8 @@ function(x_NAME_x_enable_iwyu target)
         "-Wno-unused-command-line-argument"
     )
     if(x_NAME_x_WARNINGS_AS_ERRORS)
+        message(STATUS
+            "[x_PROJECT_NAME_x] Treating IWYU warnings as errors for target: ${target}")
         list(APPEND IWYU_OPT "-Xiwyu" "--error=3")
     endif()
     set_target_properties(${target} PROPERTIES

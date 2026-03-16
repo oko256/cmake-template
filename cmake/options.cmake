@@ -15,6 +15,16 @@ macro(x_NAME_x_setup_options)
         # compile_commands.json is required for external tools
         set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL
             "Generate compile_commands.json for use by external tools" FORCE)
+
+        # GCC passes module-related flags (e.g. -fdeps-format, -fmodule-mapper, -fmodules-ts)
+        # that clang-tidy does not recognize and cannot suppress. Disable module scanning with
+        # GCC for now to avoid breaking clang-tidy support.
+        # TODO: If ever want to make GCC + clang-tidy combination work, then maybe create
+        # a wrapper script that is called instead of clang-tidy that filters out the
+        # module-related flags first (or some other fix).
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+        endif()
     endif()
 
     option(x_NAME_x_HARDENING "Enable hardening compiler options" ON)
@@ -41,7 +51,7 @@ macro(x_NAME_x_setup_options)
     option(x_NAME_x_SANITIZER_THREAD     "Enable ThreadSanitizer"                    OFF)
 
     # These options only appear in developer mode:
-    cmake_dependent_option(x_NAME_x_WARNINGS_AS_ERRORS  "Treat warnings as errors"
+    cmake_dependent_option(x_NAME_x_WARNINGS_AS_ERRORS "Treat all warnings as errors"
         ON x_NAME_x_DEVELOPER_MODE OFF)
     cmake_dependent_option(x_NAME_x_SA_CLANG_TIDY      "Enable clang-tidy static analysis"
         ON x_NAME_x_DEVELOPER_MODE OFF)
@@ -70,6 +80,7 @@ macro(x_NAME_x_setup_options)
     if(NOT PROJECT_IS_TOP_LEVEL)
         # When used as a subproject, mark most options as advanced to reduce clutter.
         mark_as_advanced(
+            x_NAME_x_CXX_EXTENSIONS
             x_NAME_x_IPO
             x_NAME_x_SANITIZER_ADDRESS
             x_NAME_x_SANITIZER_LEAK
@@ -78,6 +89,8 @@ macro(x_NAME_x_setup_options)
             x_NAME_x_WARNINGS_AS_ERRORS
             x_NAME_x_SA_CLANG_TIDY
             x_NAME_x_SA_CPPCHECK
+            x_NAME_x_SA_CPPCHECK_EXH
+            x_NAME_x_SA_IWYU
             x_NAME_x_CCACHE
         )
     endif()

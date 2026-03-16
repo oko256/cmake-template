@@ -1,5 +1,5 @@
 # Try to find new enough Catch2 via find_package first, and if not found, fetch it.
-find_package(Catch2 3.12.0 QUIET)
+find_package(Catch2 3.4.0 QUIET)
 if(NOT Catch2_FOUND)
     message(STATUS "[x_PROJECT_NAME_x] System-installed Catch2 not found or too old, using FetchContent")
     include(FetchContent)

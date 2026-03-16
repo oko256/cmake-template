@@ -75,7 +75,7 @@ Below is a list of CMake options available for this project along with their des
 | `x_NAME_x_SA_CPPCHECK_EXH`     | Enable exhaustive check level in cppcheck analysis
 | `x_NAME_x_SA_IWYU`             | Enable include-what-you-use (IWYU) static analysis tool
 | `x_NAME_x_UNITY_BUILD`         | Enable unity build to speed up compilation
-| `x_NAME_x_WARNINGS_AS_ERRORS`  | Treat compiler warnings as errors
+| `x_NAME_x_WARNINGS_AS_ERRORS`  | Treat compiler and static analysis warnings as errors
 
 ## Code coverage report
 

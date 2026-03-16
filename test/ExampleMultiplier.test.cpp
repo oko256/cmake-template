@@ -46,3 +46,13 @@ TEST_CASE("ExampleMultiplier handles edge cases", "[ExampleMultiplier]")
         REQUIRE(multiplier.result() == 9999);
     }
 }
+
+TEST_CASE("ExampleMultiplier can double its product", "[ExampleMultiplier]")
+{
+    ExampleMultiplier multiplier;
+
+    multiplier.multiply(5, 5);
+    REQUIRE(multiplier.result() == 25);
+    multiplier.doubleize();
+    REQUIRE(multiplier.result() == 50);
+}

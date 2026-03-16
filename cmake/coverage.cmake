@@ -47,27 +47,31 @@ function(x_NAME_x_setup_coverage_target_fastcov)
     set(_genhtml_extra_args "--ignore-errors;unsupported;--demangle-cpp")
 
     set(_zero_cmd ${FASTCOV_PROGRAM}
+        --branch-coverage
         --gcov ${GCOV_PROGRAM}
         --search-directory ${_base_dir}
         --zerocounters
     )
     set(_exec_cmd ${arg_EXEC_TARGET} ${arg_EXEC_ARGS})
     set(_capture_cmd ${FASTCOV_PROGRAM}
+        --branch-coverage
         --gcov ${GCOV_PROGRAM}
         --search-directory ${_base_dir}
         --process-gcno
-        --output ${arg_COVERAGE_TARGET}.json
+        --output ${arg_COVERAGE_TARGET}-fastcov.json
         --exclude-glob ${_excludes}
     )
     set(_convert_cmd ${FASTCOV_PROGRAM}
-        -C ${arg_COVERAGE_TARGET}.json
+        --branch-coverage
+        -C ${arg_COVERAGE_TARGET}-fastcov.json
         --lcov
-        --output ${arg_COVERAGE_TARGET}.info
+        --output ${arg_COVERAGE_TARGET}-fastcov.info
     )
     set(_genhtml_cmd ${GENHTML_PROGRAM}
+        --branch-coverage
         ${_genhtml_extra_args}
-        -o ${arg_COVERAGE_TARGET}
-        ${arg_COVERAGE_TARGET}.info
+        -o ${arg_COVERAGE_TARGET}-fastcov
+        ${arg_COVERAGE_TARGET}-fastcov.info
     )
 
     add_custom_target(${arg_COVERAGE_TARGET}
@@ -77,21 +81,21 @@ function(x_NAME_x_setup_coverage_target_fastcov)
         COMMAND ${_convert_cmd}
         COMMAND ${_genhtml_cmd}
         BYPRODUCTS
-            ${arg_COVERAGE_TARGET}.json
-            ${arg_COVERAGE_TARGET}.info
-            ${arg_COVERAGE_TARGET}/index.html
+            ${arg_COVERAGE_TARGET}-fastcov.json
+            ${arg_COVERAGE_TARGET}-fastcov.info
+            ${arg_COVERAGE_TARGET}-fastcov/index.html
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS ${arg_EXEC_TARGET}
         VERBATIM
         COMMENT
-        "Generating code coverage report '${arg_COVERAGE_TARGET}' for target '${arg_EXEC_TARGET}'"
+        "Generating code coverage report '${arg_COVERAGE_TARGET}-fastcov' for target '${arg_EXEC_TARGET}'"
     )
 
     add_custom_command(TARGET ${arg_COVERAGE_TARGET} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo
         "Code coverage report generated: "
-        "${arg_COVERAGE_TARGET}.json ${arg_COVERAGE_TARGET}.info ${arg_COVERAGE_TARGET}/index.html"
+        "${arg_COVERAGE_TARGET}-fastcov.json ${arg_COVERAGE_TARGET}-fastcov.info ${arg_COVERAGE_TARGET}-fastcov/index.html"
         COMMAND ${CMAKE_COMMAND} -E echo
-            "Open in browser: file://${PROJECT_BINARY_DIR}/${arg_COVERAGE_TARGET}/index.html"
+            "Open in browser: file://${PROJECT_BINARY_DIR}/${arg_COVERAGE_TARGET}-fastcov/index.html"
     )
 endfunction()
