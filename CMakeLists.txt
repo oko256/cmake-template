@@ -18,7 +18,7 @@ if(NOT PROJECT_VERSION)
     x_NAME_x_set_project_version_from_git_tag(DEFAULT_BRANCH "main")
 endif()
 message(STATUS
-    "[x_NAME_x] Project version: ${PROJECT_VERSION_FULL_STRING} "
+    "[x_PROJECT_NAME_x] Project version: ${PROJECT_VERSION_FULL_STRING} "
     "(numeric: ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})"
 )
 

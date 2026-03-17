@@ -29,8 +29,9 @@ The main features of this template include:
    interprocedural optimization (IPO/LTO).
  - Automatic generation of versioning functions and library versioning based on git tags.
  - Integration of Doxygen to build documentation.
- - GitHub CI workflows for builds with static analysis enabled, unit testing, and code coverage
-   reporting on push and pull request events.
+ - GitHub CI workflows for builds with static analysis enabled, unit testing, code coverage
+   reporting, and ASan+LSan+UBSan on push and pull request events. Separate CI job for running
+   unit tests also through TSan (since it cannot be combined with ASan or LSan).
 
 ## Platforms and compilers
 

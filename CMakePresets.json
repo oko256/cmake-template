@@ -10,7 +10,7 @@
     {
       "name": "ci",
       "displayName": "CI",
-      "description": "Configuration for CI: debug build with tests, coverage, and static analysis enabled",
+      "description": "CI configuration with most sanitizers, static analysis, and testing coverage",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
@@ -23,6 +23,33 @@
         "x_NAME_x_SA_CPPCHECK": "ON",
         "x_NAME_x_SA_CPPCHECK_EXH": "OFF",
         "x_NAME_x_SA_IWYU": "OFF",
+        "x_NAME_x_SANITIZER_ADDRESS": "ON",
+        "x_NAME_x_SANITIZER_LEAK": "ON",
+        "x_NAME_x_SANITIZER_UNDEFINED": "ON",
+        "x_NAME_x_SANITIZER_THREAD": "OFF",
+        "x_NAME_x_WARNINGS_AS_ERRORS": "ON"
+      }
+    },
+    {
+      "name": "ci-tsan",
+      "displayName": "CI-TSan",
+      "description": "Extra CI configuration with only TSan",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "x_NAME_x_BUILD_TESTING": "ON",
+        "x_NAME_x_COVERAGE": "OFF",
+        "x_NAME_x_DEVELOPER_MODE": "ON",
+        "x_NAME_x_SA_CLANG_TIDY": "OFF",
+        "x_NAME_x_SA_CPPCHECK": "OFF",
+        "x_NAME_x_SA_CPPCHECK_EXH": "OFF",
+        "x_NAME_x_SA_IWYU": "OFF",
+        "x_NAME_x_SANITIZER_ADDRESS": "OFF",
+        "x_NAME_x_SANITIZER_LEAK": "OFF",
+        "x_NAME_x_SANITIZER_UNDEFINED": "OFF",
+        "x_NAME_x_SANITIZER_THREAD": "ON",
         "x_NAME_x_WARNINGS_AS_ERRORS": "ON"
       }
     },
@@ -43,6 +70,10 @@
       "configurePreset": "ci"
     },
     {
+      "name": "ci-tsan",
+      "configurePreset": "ci-tsan"
+    },
+    {
       "name": "release",
       "configurePreset": "release"
     }
@@ -51,6 +82,13 @@
     {
       "name": "ci",
       "configurePreset": "ci",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "ci-tsan",
+      "configurePreset": "ci-tsan",
       "output": {
         "outputOnFailure": true
       }

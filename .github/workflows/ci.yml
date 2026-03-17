@@ -2,8 +2,9 @@
 # ===========
 # Parallel jobs on pushes to main branches, and on all pull requests, for:
 # 1. clang-format check
-# 2. build, test, and analyze (clang-tidy, cppcheck, unit tests, code coverage)
-# 3. typos spell check
+# 2. build, test, and analyze (testing coverage, static analysis, sanitizers other than TSan)
+# 3. build and test with TSan
+# 4. typos spell check
 
 name: CI
 on:
@@ -107,7 +108,50 @@ jobs:
           artifact-name: coverage-report
           update-comment: true
 
-  # Job 3: typos spell check
+  # ===============================
+  # Job 3: build and test with TSan
+  # ===============================
+
+  build-tsan:
+    name: Build and Test with TSan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Recommended for checkout action
+    steps:
+      - uses: actions/checkout@v6
+
+      # Install tools
+      - name: Install CMake
+        uses: lukka/get-cmake@v4.2.3
+
+      # Install project dependencies (if any)
+      - name: Install project dependencies
+        run: |
+          sudo apt-get install -y catch2 libspdlog-dev
+
+      # Configure and build using CI-TSan preset from CMakePresets.json.
+
+      - name: Configure with TSan (CMake preset)
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'ci-tsan'
+
+      - name: Build with TSan (CMake preset)
+        uses: lukka/run-cmake@v10
+        with:
+          buildPreset: 'ci-tsan'
+
+      # Run unit tests
+
+      - name: Run tests with TSan
+        uses: lukka/run-cmake@v10
+        with:
+          testPreset: 'ci-tsan'
+
+  # ========================
+  # Job 4: typos spell check
+  # ========================
+
   typos:
     name: Spell Check
     runs-on: ubuntu-latest
