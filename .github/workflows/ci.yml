@@ -19,6 +19,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  # Project dependencies that shall be installed with apt before building:
+  APT_DEPENDS: catch2 libspdlog-dev
+
 jobs:
   # =========================
   # Job 1: clang-format check
@@ -70,10 +74,12 @@ jobs:
         run: |
           pipx install fastcov
 
-      # Install project dependencies (if any)
+      # Install project dependencies (remove this step if there's no dependencies)
       - name: Install project dependencies
-        run: |
-          sudo apt-get install -y catch2 libspdlog-dev
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: ${{ env.APT_DEPENDS }}
+          version: 1.0
 
       # Configure and build using CI preset from CMakePresets.json.
       # Static analysis like cppcheck and clang-tidy are run as part of the build, and the
@@ -124,10 +130,12 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@v4.2.3
 
-      # Install project dependencies (if any)
+      # Install project dependencies (remove this step if there's no dependencies)
       - name: Install project dependencies
-        run: |
-          sudo apt-get install -y catch2 libspdlog-dev
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: ${{ env.APT_DEPENDS }}
+          version: 1.0
 
       # Configure and build using CI-TSan preset from CMakePresets.json.
 
