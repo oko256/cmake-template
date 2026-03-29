@@ -84,7 +84,7 @@ jobs:
           version: 1.0
       - name: Install fastcov and diff-cover
         run: |
-          pipx install fastcov diff-cover
+          pipx install fastcov==1.16 diff-cover==10.2.0
 
       # Install project dependencies (remove this step if there's no dependencies)
       - name: Install project dependencies
