@@ -22,6 +22,10 @@ concurrency:
 env:
   # Project dependencies that shall be installed with apt before building:
   APT_DEPENDS: catch2 libspdlog-dev
+  # Full code coverage alert threshold in % (set to 0 to disable alert)
+  CODE_COVERAGE_ALERT_THRESHOLD: 80
+  # PR diff code coverage alert threshold in % (set to 0 to disable alert)
+  PR_DIFF_COVERAGE_ALERT_THRESHOLD: 80
 
 jobs:
   # =========================
@@ -59,6 +63,14 @@ jobs:
       pull-requests: write # Allow commenting on PR
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 50
+
+      # Fetch also the base branch if this is a PR for diff code coverage reporting
+      - name: Fetch base branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=50
 
       # Install tools
 
@@ -70,9 +82,9 @@ jobs:
         with:
           packages: clang-tidy-19 cppcheck lcov python3 pipx
           version: 1.0
-      - name: Install fastcov
+      - name: Install fastcov and diff-cover
         run: |
-          pipx install fastcov
+          pipx install fastcov diff-cover
 
       # Install project dependencies (remove this step if there's no dependencies)
       - name: Install project dependencies
@@ -109,10 +121,47 @@ jobs:
         uses: zgosalvez/github-actions-report-lcov@v7.0.2
         with:
           coverage-files: build/*-fastcov.info
-          minimum-coverage: 80
+          minimum-coverage: ${{ env.CODE_COVERAGE_ALERT_THRESHOLD }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           artifact-name: coverage-report
           update-comment: true
+
+      # If this is a PR, post also a code coverage report from the diff of changes
+
+      - name: Generate PR code diff coverage report
+        if: github.event_name == 'pull_request'
+        id: diffcover
+        run: |
+          set +e
+          diff-cover --format=markdown:build/diff-cover.md \
+            --compare-branch="origin/${{ github.base_ref }}" \
+            --fail-under=${PR_DIFF_COVERAGE_ALERT_THRESHOLD} \
+            build/*-fastcov.info
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Add warning to diff coverage report if coverage is low
+        if: github.event_name == 'pull_request' && steps.diffcover.outputs.exit_code != '0'
+        run: |
+          awk "
+          BEGIN { added=0 }
+          /^## Summary/ {
+            print;
+            print \"\";
+            print \"> [!CAUTION]\";
+            print \"> Diff coverage is below the required threshold (${PR_DIFF_COVERAGE_ALERT_THRESHOLD} %).\";
+            print \"> Please add or update tests to cover the changes in this PR.\";
+            added=1;
+            next;
+          }
+          { print }
+          " build/diff-cover.md > build/diff-cover.tmp && mv -f build/diff-cover.tmp build/diff-cover.md
+
+      - name: Update PR code diff coverage comment
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v3
+        with:
+          path: build/diff-cover.md
+          header: diff-coverage
 
   # ===============================
   # Job 3: build and test with TSan
