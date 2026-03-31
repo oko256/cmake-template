@@ -138,6 +138,8 @@ jobs:
             --fail-under=${PR_DIFF_COVERAGE_ALERT_THRESHOLD} \
             build/*-fastcov.info
           echo "exit_code=$?" >> $GITHUB_OUTPUT
+          # Push all headings in output markdown one level down for nicer formatting
+          sed -i 's/^#/##/' build/diff-cover.md
 
       - name: Add warning to diff coverage report if coverage is low
         if: github.event_name == 'pull_request' && steps.diffcover.outputs.exit_code != '0'
