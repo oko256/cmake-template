@@ -141,12 +141,12 @@ jobs:
           # Push all headings in output markdown one level down for nicer formatting
           sed -i 's/^#/##/' build/diff-cover.md
 
-      - name: Add warning to diff coverage report if coverage is low
+      - name: Add warning to diff coverage report if coverage is too low
         if: github.event_name == 'pull_request' && steps.diffcover.outputs.exit_code != '0'
         run: |
           awk "
           BEGIN { added=0 }
-          /^## Summary/ {
+          /^### Summary/ {
             print;
             print \"\";
             print \"> [!CAUTION]\";
@@ -164,6 +164,12 @@ jobs:
         with:
           path: build/diff-cover.md
           header: diff-coverage
+
+      - name: Fail if PR code diff coverage is too low
+        if: github.event_name == 'pull_request' && steps.diffcover.outputs.exit_code != '0'
+        run: |
+          echo "::error::Failed because PR diff coverage is below the required threshold (${PR_DIFF_COVERAGE_ALERT_THRESHOLD} %)."
+          exit 1
 
   # ===============================
   # Job 3: build and test with TSan
