@@ -146,7 +146,7 @@ jobs:
         run: |
           awk "
           BEGIN { added=0 }
-          /^## Summary/ {
+          /^### Summary/ {
             print;
             print \"\";
             print \"> [!CAUTION]\";
