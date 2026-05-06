@@ -32,6 +32,7 @@ function(x_NAME_x_enable_warnings
         -Wnon-virtual-dtor      # A class with virtual functions has a non-virtual destructor.
         -Wold-style-cast        # Use of C-style casts in C++ code.
         -Woverloaded-virtual    # A function hides a virtual function from a base class.
+        -Wsuggest-override      # Suggest override/final keywords for virtual functions.
     )
 
     # Additional warnings for C language that work on both GCC and Clang:
@@ -40,26 +41,6 @@ function(x_NAME_x_enable_warnings
         -Werror=incompatible-pointer-types  # Pointer type mismatches.
         -Werror=int-conversion              # Implicit int conversions that may change value.
     )
-
-    # Additional GCC specific warnings:
-    if(CMAKE_CXX_COMPILER_ID MATCHES ".*GNU")
-        # For C:
-        list(APPEND warn_compile_options_c
-            -Wtrampolines           # Warn about trampolines that require executable stacks.
-            -Wduplicated-cond       # Identical branches in if-else-if chain.
-            -Wduplicated-branches   # Identical switch branches.
-            -Wlogical-op            # Suspicious use of logical operators in expressions.
-        )
-        # For C++:
-        list(APPEND warn_compile_options_cpp
-            -Wtrampolines           # Warn about trampolines that require executable stacks.
-            -Wduplicated-cond       # Identical branches in if-else-if chain.
-            -Wduplicated-branches   # Identical switch branches.
-            -Wlogical-op            # Suspicious use of logical operators in expressions.
-            -Wuseless-cast          # Cast that does not change value.
-            -Wsuggest-override      # Suggest override/final keywords for virtual functions.
-        )
-    endif()
 
     message(STATUS "[x_PROJECT_NAME_x] Enabled extra compiler warnings for target: ${target}")
     message(VERBOSE "[x_PROJECT_NAME_x] - C compiler: ${warn_compile_options_c}")
