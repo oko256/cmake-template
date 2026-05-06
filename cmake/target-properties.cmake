@@ -116,11 +116,6 @@ function(x_NAME_x_enable_iwyu target)
         "-Wno-ignored-optimization-argument"
         "-Wno-unused-command-line-argument"
     )
-    if(x_NAME_x_WARNINGS_AS_ERRORS)
-        message(STATUS
-            "[x_PROJECT_NAME_x] Treating IWYU warnings as errors for target: ${target}")
-        list(APPEND IWYU_OPT "-Xiwyu" "--error=3")
-    endif()
     set_target_properties(${target} PROPERTIES
         CXX_INCLUDE_WHAT_YOU_USE "${IWYU_OPT}"
         C_INCLUDE_WHAT_YOU_USE "${IWYU_OPT}"

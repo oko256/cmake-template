@@ -60,7 +60,7 @@ macro(x_NAME_x_setup_options)
     cmake_dependent_option(x_NAME_x_SA_CPPCHECK_EXH    "Enable cppcheck's exhaustive check level"
         OFF x_NAME_x_DEVELOPER_MODE OFF)
     cmake_dependent_option(x_NAME_x_SA_IWYU            "Enable include-what-you-use static analysis"
-        ON x_NAME_x_DEVELOPER_MODE OFF)
+        OFF x_NAME_x_DEVELOPER_MODE OFF)
 
     # Enable Ccache in developer mode if Ccache is available.
     find_program(CCACHE_PROGRAM ccache)
