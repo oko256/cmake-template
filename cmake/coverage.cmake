@@ -2,7 +2,13 @@
 # code coverage report using fastcov for executable target EXEC_TARGET (can also be executable
 # path). Additional arguments for executable target can be provided with EXEC_ARGS argument.
 # EXCLUDE argument can be used to provide list of glob patterns to exclude from the report.
-# More excludes can also be provided globally with GLOBAL_COVERAGE_EXCLUDES variable.
+#
+# More excludes can also be provided globally with GLOBAL_COVERAGE_EXCLUDES global property.
+# You can add global exclude glob patterns wherever like this:
+# set_property(GLOBAL APPEND PROPERTY GLOBAL_COVERAGE_EXCLUDES "*/ignore-these/*")
+# Or specific files like this (e.g. in src/CMakeLists.txt file):
+# set_property(GLOBAL APPEND PROPERTY GLOBAL_COVERAGE_EXCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/ignore-this-file.cpp")
+#
 # Base directory defaults to PROJECT_BINARY_DIR, but can be changed with BASE_DIR argument.
 function(x_NAME_x_setup_coverage_target_fastcov)
     cmake_parse_arguments(
@@ -39,7 +45,8 @@ function(x_NAME_x_setup_coverage_target_fastcov)
     endif()
 
     set(_excludes "")
-    foreach(i_exclude ${arg_EXCLUDE} ${GLOBAL_COVERAGE_EXCLUDES})
+    get_property(_excludes_from_global GLOBAL PROPERTY GLOBAL_COVERAGE_EXCLUDES)
+    foreach(i_exclude ${arg_EXCLUDE} ${_excludes_from_global})
         list(APPEND _excludes "${i_exclude}")
     endforeach()
     list(REMOVE_DUPLICATES _excludes)
