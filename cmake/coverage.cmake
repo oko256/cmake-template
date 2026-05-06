@@ -51,7 +51,7 @@ function(x_NAME_x_setup_coverage_target_fastcov)
     endforeach()
     list(REMOVE_DUPLICATES _excludes)
 
-    set(_genhtml_extra_args "--ignore-errors;unsupported;--demangle-cpp")
+    set(_genhtml_extra_args "--ignore-errors;inconsistent,unsupported;--demangle-cpp")
 
     set(_zero_cmd ${FASTCOV_PROGRAM}
         --branch-coverage
