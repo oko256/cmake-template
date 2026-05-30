@@ -50,6 +50,7 @@ jobs:
         uses: jidicula/clang-format-action@654a770daa28443dd111d133e4083e21c1075674 # v4.18.0
         with:
           check-path: ${{ matrix.path }}
+          clang-format-version: 19
 
   # ===============================
   # Job 2: build, test, and analyze
