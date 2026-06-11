@@ -45,10 +45,13 @@ if(PROJECT_IS_TOP_LEVEL)
     find_package(Doxygen QUIET)
     if(Doxygen_FOUND)
         set(DOXYGEN_FILE_PATTERNS *.c *.cpp *.cxx *.h *.hpp *.hxx *.md)
-        set(DOXYGEN_EXCLUDE_PATTERNS */build/* */build-*/ */cmake/*)
         set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${PROJECT_SOURCE_DIR}/README.md")
+        set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
         doxygen_add_docs(doc
-            ${PROJECT_SOURCE_DIR}
+            ${PROJECT_SOURCE_DIR}/src
+            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_SOURCE_DIR}/test
+            ${PROJECT_SOURCE_DIR}/README.md
             COMMENT "Generate documentation with Doxygen"
         )
     endif()
