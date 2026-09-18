@@ -34,65 +34,29 @@ function(x_NAME_x_enable_sanitizers
             "[x_PROJECT_NAME_x] Enabling sanitizers [${combined_sanitizers}] for target: ${target}")
         target_compile_options(${target} PRIVATE -fsanitize=${combined_sanitizers})
         target_link_options(${target} PRIVATE -fsanitize=${combined_sanitizers})
+        if(enable_sanitizer_undefined)
+            # Make UndefinedBehaviorSanitizer findings fatal instead of recoverable.
+            target_compile_options(${target} PRIVATE -fno-sanitize-recover=undefined)
+            target_link_options(${target} PRIVATE -fno-sanitize-recover=undefined)
+        endif()
         target_link_libraries(${target} PRIVATE x_NAME_x_sanitizer_defaults)
     endif()
 endfunction()
 
 if(NOT TARGET x_NAME_x_sanitizer_defaults)
     # Create a small source file that provides default options for sanitizers.
+    # Most of the built-in options are sane defaults, so only those that we want to differ are specified here.
     file(WRITE "${CMAKE_BINARY_DIR}/sanitizer_defaults.c" [=[
 /*
  * Default options for sanitizer runtimes.
  *
  * These functions are called by the respective sanitizer runtimes at startup.
- * Environment variables (e.g. ASAN_OPTIONS) can be used to override these defaults.
+ * Environment variables (e.g. UBSAN_OPTIONS) can be used to override these defaults.
  */
-
-/*** AddressSanitizer ***/
-#if defined(__has_feature)
-  #if __has_feature(address_sanitizer)
-    #define HAS_ASAN
-  #endif
-#elif defined(__SANITIZE_ADDRESS__)
-  #define HAS_ASAN
-#endif
-
-#ifdef HAS_ASAN
-const char *__asan_default_options(void) {
-    return "halt_on_error=1"
-           ":abort_on_error=1"
-           ":print_stacktrace=1"
-           ":detect_leaks=1";
-}
-#endif
-
-/*** ThreadSanitizer ***/
-#if defined(__has_feature)
-  #if __has_feature(thread_sanitizer)
-    #define HAS_TSAN
-  #endif
-#elif defined(__SANITIZE_THREAD__)
-  #define HAS_TSAN
-#endif
-
-#ifdef HAS_TSAN
-const char *__tsan_default_options(void) {
-    return "halt_on_error=1"
-           ":abort_on_error=1"
-           ":print_stacktrace=1";
-}
-#endif
-
-/*** LeakSanitizer ***/
-const char *__lsan_default_options(void) {
-    return "exitcode=42";
-}
 
 /*** UndefinedBehaviorSanitizer ***/
 const char *__ubsan_default_options(void) {
-    return "halt_on_error=1"
-           ":abort_on_error=1"
-           ":print_stacktrace=1";
+    return "print_stacktrace=1";
 }
 
 ]=])
