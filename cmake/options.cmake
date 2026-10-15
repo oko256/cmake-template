@@ -175,8 +175,8 @@ function(x_NAME_x_apply_options target)
 
     # Enable code coverage instrumentation for this target only, not for dependencies.
     if(x_NAME_x_COVERAGE)
-        target_compile_options(${target} PRIVATE --coverage -O0 -g)
-        target_link_options(${target} PRIVATE --coverage)
+        target_compile_options(${target} PRIVATE --coverage -fprofile-update=atomic -O0 -g)
+        target_link_options(${target} PRIVATE --coverage -fprofile-update=atomic)
     endif()
 
     set_target_properties(${target} PROPERTIES UNITY_BUILD ${x_NAME_x_UNITY_BUILD})
