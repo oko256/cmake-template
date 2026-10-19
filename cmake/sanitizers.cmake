@@ -54,6 +54,13 @@ if(NOT TARGET x_NAME_x_sanitizer_defaults)
  * Environment variables (e.g. UBSAN_OPTIONS) can be used to override these defaults.
  */
 
+/*** ThreadSanitizer ***/
+const char *__tsan_default_options(void) {
+    /* Pre-built dependencies are typically not TSan-instrumented, and will cause a lot of false positives.
+     * Only check calls made from instrumented code (i.e. this project). */
+    return "ignore_noninstrumented_modules=1";
+}
+
 /*** UndefinedBehaviorSanitizer ***/
 const char *__ubsan_default_options(void) {
     return "print_stacktrace=1";
