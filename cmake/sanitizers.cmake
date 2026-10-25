@@ -39,7 +39,8 @@ function(x_NAME_x_enable_sanitizers
             target_compile_options(${target} PRIVATE -fno-sanitize-recover=undefined)
             target_link_options(${target} PRIVATE -fno-sanitize-recover=undefined)
         endif()
-        target_link_libraries(${target} PRIVATE x_NAME_x_sanitizer_defaults)
+        # Build-only: keep this out of install export set of static libraries.
+        target_link_libraries(${target} PRIVATE $<BUILD_INTERFACE:x_NAME_x_sanitizer_defaults>)
     endif()
 endfunction()
 
