@@ -21,7 +21,7 @@ concurrency:
 
 env:
   # Project dependencies that shall be installed with apt before building:
-  APT_DEPENDS: catch2 libspdlog-dev
+  APT_DEPENDS: catch2
   # Full code coverage alert threshold in % (set to 0 to disable alert)
   CODE_COVERAGE_ALERT_THRESHOLD: 80
   # PR diff code coverage alert threshold in % (set to 0 to disable alert)
